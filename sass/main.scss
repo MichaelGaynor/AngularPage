@@ -1,0 +1,64 @@
+// Put any @imports here
+// See Readme for a list of supported ones
+@import 'foundation';
+
+
+//Consistent Elements
+$titleColor: #22E30F;
+$bodyColor: #333333;
+$topbar-bg-color: #22E30F;
+$containerColor: #666664;
+
+body {
+  background: $bodyColor;
+}
+
+h1{
+  color: $bodyColor;
+}
+
+
+.top-bar .name h1 a{
+  color: $titleColor;
+}
+
+
+.container{
+  background: $containerColor;
+  overflow: hidden;
+}
+
+.content{
+  margin-left: 5%;
+  width: 50%;
+  float: left;
+}
+
+.container{
+  .container{
+    width: 80%;
+    margin: 5% 10%;
+  }
+}
+
+.audio{
+  margin: 5% 10%;
+}
+
+.image{
+  margin-right: 5%;
+  margin-left: 5%;
+  width: 35%;
+  float: right;
+}
+
+
+.portfolio-list{
+  list-style: none;
+  text-decoration: none;
+}
+
+footer{
+  text-align: center;
+  font-size: 8px;
+}
