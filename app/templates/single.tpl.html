@@ -1,0 +1,17 @@
+<h3>{{singleWhiskey.maker}} {{singleWhiskey.name}}</h3>
+
+<p> This scotch is made by {{singleWhiskey.maker}}</p>
+
+<div>
+  <img src="{{singleWhiskey.image}}">
+</div>
+
+<hr>
+
+<rating value="rate" max="max" readonly="isReadonly" on-hover="hoveringOver(value)" on-leave="overStar = null" ng-click="rateMe(singleWhiskey)"></rating>
+<span class="label" ng-class="{'label-warning': percent<30, 'label-info': percent>=30 && percent<70, 'label-success': percent>=70}" ng-show="overStar && !isReadonly">{{percent}}%</span>
+
+<hr>
+
+<a href="#/edit/{{singleWhiskey.objectId}}">Edit</a> |
+<a href="#" ng-click="deleteMe(singleWhiskey)">Delete</a>

@@ -1,8 +1,11 @@
 <h1>{{title}}</h1>
 <div class="content">
-<u class="todo-list">
+  <ul class="scotch-list">
+    <li ng-repeat="whiskey in whiskeys">
+      <a href="#/single/{{whiskey.objectId}}"> {{whiskey.name}} year from {{whiskey.maker}}</a>
+    </li>
 
-</u>
+  </ul>
 </div>
 <div class="image">
   <img src="http://vignette2.wikia.nocookie.net/rift/images/7/7f/AWESOME_FACE!!!.png/revision/latest?cb=20110302225528">

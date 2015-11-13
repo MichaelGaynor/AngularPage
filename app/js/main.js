@@ -16,14 +16,22 @@ var config = function config($stateProvider, $urlRouterProvider) {
     url: '/',
     controller: 'HomeController',
     templateUrl: 'templates/home.tpl.html'
-  }).state('root.todo', {
-    url: '/todo',
-    controller: 'TodoController',
-    templateUrl: 'templates/todo.tpl.html'
-  }).state('root.singletodo', {
-    url: '/todo/:singleID',
+  }).state('root.list', {
+    url: '/list',
+    controller: 'ListController',
+    templateUrl: 'templates/list.tpl.html'
+  }).state('root.single', {
+    url: '/single/:whiskeyId',
     controller: 'SingleController',
     templateUrl: 'templates/single.tpl.html'
+  }).state('root.add', {
+    url: '/add',
+    controller: 'AddController',
+    templateUrl: 'templates/add.tpl.html'
+  }).state('root.edit', {
+    url: '/edit/:whiskeyId',
+    controller: 'EditController',
+    templateUrl: 'templates/edit.tpl.html'
   }).state('root.soundcloud', {
     url: '/soundcloud',
     controller: 'SoundCloudController',
@@ -37,6 +45,50 @@ exports['default'] = config;
 module.exports = exports['default'];
 
 },{}],2:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+var AddController = function AddController($scope, WhiskeyService) {
+
+  $scope.addWhiskey = function (obj) {
+    WhiskeyService.addWhiskey(obj).then(function (res) {
+      $scope.whiskey = {};
+    });
+  };
+};
+
+AddController.$inject = ['$scope', 'WhiskeyService'];
+
+exports['default'] = AddController;
+module.exports = exports['default'];
+
+},{}],3:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+var EditController = function EditController($scope, $stateParams, WhiskeyService) {
+
+  WhiskeyService.getWhiskey($stateParams.whiskeyId).then(function (res) {
+    $scope.singleWhiskey = res.data;
+  });
+
+  $scope.updateWhiskey = function (obj) {
+    WhiskeyService.update(obj).then(function (res) {
+      console.log(res);
+    });
+  };
+};
+
+EditController.$inject = ['$scope', '$stateParams', 'WhiskeyService'];
+
+exports['default'] = EditController;
+module.exports = exports['default'];
+
+},{}],4:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -51,7 +103,72 @@ HomeController.$inject = ['$scope'];
 exports["default"] = HomeController;
 module.exports = exports["default"];
 
-},{}],3:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+var ListController = function ListController($scope, WhiskeyService) {
+
+  $scope.title = "Scotch List";
+
+  WhiskeyService.GetWhiskey().then(function (res) {
+    $scope.whiskeys = res.data.results;
+  });
+};
+
+ListController.$inject = ['$scope', 'WhiskeyService'];
+exports['default'] = ListController;
+module.exports = exports['default'];
+
+},{}],6:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+var SingleController = function SingleController($scope, $stateParams, WhiskeyService, $state) {
+
+  $scope.rate = 7;
+
+  WhiskeyService.getWhiskey($stateParams.whiskeyId).then(function (res) {
+    $scope.singleWhiskey = res.data;
+    if (res.data.rating) {
+      $scope.rate = res.data.rating;
+    }
+  });
+
+  $scope.deleteMe = function (obj) {
+    WhiskeyService['delete'](obj).then(function (res) {
+      console.log(res);
+      $state.go('root.list');
+    });
+  };
+
+  $scope.max = 10;
+  $scope.isReadonly = false;
+
+  $scope.hoveringOver = function (value) {
+    $scope.overStar = value;
+    $scope.percent = 100 * (value / $scope.max);
+  };
+
+  $scope.ratingStates = [{ stateOn: 'fa-check-circle', stateOff: 'fa-check-circle-o' }, { stateOn: 'fa-star', stateOff: 'fa-start-o' }, { stateOn: 'fa-heart', stateOff: 'fa-ban' }, { stateOn: 'fa-heart' }, { stateOff: 'fa-power-off' }];
+
+  $scope.rateMe = function (singleWhiskey) {
+    WhiskeyService.rate(singleWhiskey, $scope.rate).then(function () {
+      alert('Rating Saved');
+    });
+  };
+};
+
+SingleController.$inject = ['$scope', '$stateParams', 'WhiskeyService', '$state'];
+
+exports['default'] = SingleController;
+module.exports = exports['default'];
+
+},{}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -80,22 +197,7 @@ SoundCloudController.$inject = ['$scope', 'SC', '$http', '$sce'];
 exports['default'] = SoundCloudController;
 module.exports = exports['default'];
 
-},{}],4:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-var TodoController = function TodoController($scope) {
-
-  $scope.title = "To Do";
-};
-
-TodoController.$inject = ['$scope'];
-exports["default"] = TodoController;
-module.exports = exports["default"];
-
-},{}],5:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 'use strict';
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -118,14 +220,105 @@ var _controllersSoundcloudController = require('./controllers/soundcloudControll
 
 var _controllersSoundcloudController2 = _interopRequireDefault(_controllersSoundcloudController);
 
-var _controllersTodoController = require('./controllers/todoController');
+var _controllersListController = require('./controllers/listController');
 
-var _controllersTodoController2 = _interopRequireDefault(_controllersTodoController);
+var _controllersListController2 = _interopRequireDefault(_controllersListController);
+
+var _controllersSingleController = require('./controllers/singleController');
+
+var _controllersSingleController2 = _interopRequireDefault(_controllersSingleController);
+
+var _controllersAddController = require('./controllers/addController');
+
+var _controllersAddController2 = _interopRequireDefault(_controllersAddController);
+
+var _controllersEditController = require('./controllers/editController');
+
+var _controllersEditController2 = _interopRequireDefault(_controllersEditController);
+
+var _servicesWhiskeyService = require('./services/whiskey.service');
+
+var _servicesWhiskeyService2 = _interopRequireDefault(_servicesWhiskeyService);
 
 //register a model
-_angular2['default'].module('app', ['ui.router']).constant('SC', '8927a65b926a9001bc02f4277da049d4').config(_config2['default']).controller('HomeController', _controllersHomeController2['default']).controller('SoundCloudController', _controllersSoundcloudController2['default']).controller('TodoController', _controllersTodoController2['default']);
+_angular2['default'].module('app', ['ui.router']).constant('SC', '8927a65b926a9001bc02f4277da049d4').constant('PARSE', {
+  URL: 'https://api.parse.com/1/',
+  CONFIG: {
+    headers: {
+      'X-Parse-Application-Id': 'Zjgd8YOOQKK2HPOQwRyMb3EaKTlcHXwQCmAHZHIQ',
+      'X-Parse-REST-API-Key': '1jJcNv5MA3D6GILJEIN7D546CFyZHHUidUqEblxX'
+    }
+  }
+}).config(_config2['default']).controller('HomeController', _controllersHomeController2['default']).controller('SoundCloudController', _controllersSoundcloudController2['default']).controller('ListController', _controllersListController2['default']).controller('SingleController', _controllersSingleController2['default']).controller('AddController', _controllersAddController2['default']).controller('EditController', _controllersEditController2['default']).service('WhiskeyService', _servicesWhiskeyService2['default']);
 
-},{"./config":1,"./controllers/homeController":2,"./controllers/soundcloudController":3,"./controllers/todoController":4,"angular":8,"angular-ui-router":6}],6:[function(require,module,exports){
+},{"./config":1,"./controllers/addController":2,"./controllers/editController":3,"./controllers/homeController":4,"./controllers/listController":5,"./controllers/singleController":6,"./controllers/soundcloudController":7,"./services/whiskey.service":9,"angular":12,"angular-ui-router":10}],9:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+var WhiskeyService = function WhiskeyService($http, PARSE) {
+
+  var url = PARSE.URL + 'classes/Whiskey';
+
+  var checkAuth = function checkAuth() {
+    return true;
+  };
+
+  this.GetWhiskey = function () {
+    if (checkAuth()) {
+      return $http({
+        url: url,
+        headers: PARSE.CONFIG.headers,
+        method: 'GET',
+        cache: true
+      });
+    }
+  };
+
+  this.getWhiskey = function (whiskeyId) {
+    if (checkAuth()) {
+      return $http({
+        method: 'GET',
+        url: url + '/' + whiskeyId,
+        headers: PARSE.CONFIG.headers,
+        cache: true
+      });
+    }
+  };
+
+  var Whiskey = function Whiskey(obj) {
+    this.name = obj.name;
+    this.maker = obj.maker;
+    this.image = obj.image;
+    this.hasTried = false;
+  };
+
+  this.addWhiskey = function (obj) {
+    var w = new Whiskey(obj);
+    return $http.post(url, w, PARSE.CONFIG);
+  };
+
+  this.update = function (obj) {
+    return $http.put(url + '/' + obj.objectId, PARSE.CONFIG);
+  };
+
+  this['delete'] = function (obj) {
+    return $http['delete'](url + '/' + obj.objectId, PARSE.CONFIG);
+  };
+
+  this.rate = function (obj, rating) {
+    obj.rating = rating;
+    return $http.put(url + '/' + obj.objectId, obj, PARSE.CONFIG);
+  };
+};
+
+WhiskeyService.$inject = ['$http', 'PARSE'];
+
+exports['default'] = WhiskeyService;
+module.exports = exports['default'];
+
+},{}],10:[function(require,module,exports){
 /**
  * State-based routing for AngularJS
  * @version v0.2.15
@@ -4496,7 +4689,7 @@ angular.module('ui.router.state')
   .filter('isState', $IsStateFilter)
   .filter('includedByState', $IncludedByStateFilter);
 })(window, window.angular);
-},{}],7:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 /**
  * @license AngularJS v1.4.7
  * (c) 2010-2015 Google, Inc. http://angularjs.org
@@ -33401,11 +33594,11 @@ $provide.value("$locale", {
 })(window, document);
 
 !window.angular.$$csp().noInlineStyle && window.angular.element(document.head).prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>');
-},{}],8:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 require('./angular');
 module.exports = angular;
 
-},{"./angular":7}]},{},[5])
+},{"./angular":11}]},{},[8])
 
 
 //# sourceMappingURL=main.js.map

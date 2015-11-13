@@ -1,6 +1,6 @@
-## Welcome to My Project
+## Enjoy My Angular Page 
 
-> I am your Readme.md file, you should probably update me.
+>This page is made entirely out of Angular. I can't think of anything else you need to know, so enjoy it!
 
 
 ## Usage
